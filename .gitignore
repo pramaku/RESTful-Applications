@@ -1,3 +1,4 @@
-target/*
+RestfulCustomerServiceSystem/target/**
+RestfulCustomerServiceSystem/.settings/**
 .classpath
 .project
