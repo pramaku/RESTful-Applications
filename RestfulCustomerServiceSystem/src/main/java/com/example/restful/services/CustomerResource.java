@@ -1,5 +1,4 @@
 // CustomerResource.java - (insert one line description here)
-// (C) Copyright 2017 Hewlett Packard Enterprise Development LP
 
 package com.example.restful.services;
 
