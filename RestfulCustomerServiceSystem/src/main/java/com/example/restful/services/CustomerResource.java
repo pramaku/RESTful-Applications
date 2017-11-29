@@ -59,7 +59,7 @@ public class CustomerResource
         return Response.created(URI.create("/customers/" + customer.getId())).build();
     }
 
-    // GET call to retrieve a given customer resource.
+    // GET call to retrieve a given customer resource based on ID.
     @GET
     @Path("{id}")
     @Produces("application/xml")
@@ -88,6 +88,42 @@ public class CustomerResource
                 }
             }
         };
+    }
+
+    @GET
+    @Path("{firstname}-{lastname}")
+    public StreamingOutput getCustomer(
+            @PathParam("firstname") final String firstName,
+            @PathParam("lastname") final String lastName)
+    {
+        for (final int id : customerDB.keySet())
+        {
+            final Customer customer = customerDB.get(id);
+            if (customer.getFirstName().equals(firstName)
+                    &&
+                    customer.getLastName().equals(lastName))
+            {
+                return new StreamingOutput()
+                {
+                    public void write(final OutputStream os)
+                            throws IOException,
+                            WebApplicationException
+                    {
+                        try
+                        {
+                            outputCustomer(os, customer);
+                        }
+                        catch (final JAXBException e)
+                        {
+                            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                        }
+                    }
+                };
+            }
+        }
+
+        // we could not find the customer with given first and last name
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     // PUT call to update a customer resource with given fields
