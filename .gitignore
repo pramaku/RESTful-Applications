@@ -1,4 +1,7 @@
 RestfulCustomerServiceSystem/target/**
 RestfulCustomerServiceSystem/.settings/**
+Python/gamesapi/games/migrations/__pycache__/**
+Python/gamesapi/games/__pycache__/**
+Python/gamesapi/gamesapi/__pycache__/**
 .classpath
 .project
