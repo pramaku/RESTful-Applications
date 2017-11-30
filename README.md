@@ -1,2 +1,2 @@
-# RESTful-Java-Applications
+# RESTful-Applications
 Implementations on RESTful API in Java using JAX-RS
