@@ -147,4 +147,19 @@ public class Customer
     {
         this.country = country;
     }
+    
+    public String toString()
+    {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("ID = " + id + "\n");
+    	sb.append("FirstName = " + firstName + "\n");
+    	sb.append("LastName = " + lastName + "\n");
+    	sb.append("Street = " + street + "\n");
+    	sb.append("City = " + city + "\n");
+    	sb.append("State = " + state + "\n");
+    	sb.append("Zip = " + zip + "\n");
+    	sb.append("Country = " + country + "\n");
+    	
+    	return sb.toString();
+    }
 }
