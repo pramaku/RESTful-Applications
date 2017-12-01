@@ -1,5 +1,5 @@
-RestfulCustomerServiceSystem/target/**
-RestfulCustomerServiceSystem/.settings/**
+Java/RestfulCustomerServiceSystem/target/**
+Java/RestfulCustomerServiceSystem/.settings/**
 Python/gamesapi/games/migrations/__pycache__/**
 Python/gamesapi/games/__pycache__/**
 Python/gamesapi/gamesapi/__pycache__/**

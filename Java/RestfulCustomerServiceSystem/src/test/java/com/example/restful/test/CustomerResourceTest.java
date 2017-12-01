@@ -17,8 +17,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -32,7 +34,7 @@ public class CustomerResourceTest
     static Client client = null;
     final String scheme = "http";
     final String host = "localhost";
-    final int port = 5632;
+    final int port = 8080;
     final String contextPath = "RestfulCustomerServiceSystem-1.0-SNAPSHOT";
     final String servletURI = "rest";
     final String customer_resource_path = "customers";
@@ -84,11 +86,9 @@ public class CustomerResourceTest
 
         final StringWriter postData = new StringWriter();
         m.marshal(customer, postData);
-        System.out.println("POST call with URI " + buildBasicUrl());
         final Response response = client.target(buildBasicUrl()).request().post(Entity.xml(postData.toString()));
         Assert.assertEquals(201, response.getStatus());
         resourceLoc = response.getLocation();
-        System.out.println("Customer resource location - " + resourceLoc);
         response.close();
     }
 
@@ -102,12 +102,9 @@ public class CustomerResourceTest
         final String path = resourceLoc.getPath();
         final String idStr = path.substring(path.lastIndexOf('/') + 1);
         final URI uri = URI.create(buildBasicUrl().toString() + "/" + idStr);
-        System.out.println("GET call with URI " + uri);
 
         final String response = client.target(uri).request().get(String.class);
         Assert.assertNotNull(response);
-        System.out.println("customer resource");
-        System.out.println(response);
 
         final JAXBContext cxt = JAXBContext.newInstance(Customer.class);
         final Unmarshaller m = cxt.createUnmarshaller();
@@ -118,6 +115,26 @@ public class CustomerResourceTest
         Assert.assertEquals("456789", customer.getZip());
     }
 
+    @Test
+    public void testGetCustomerFromName()
+    		throws JAXBException, URISyntaxException
+    {
+    	testCreateCustomer();
+
+        final URI uri = URI.create(buildBasicUrl().toString() + "/" + "Bill-Mark");
+
+        final String response = client.target(uri).request().get(String.class);
+        Assert.assertNotNull(response);
+
+        final JAXBContext cxt = JAXBContext.newInstance(Customer.class);
+        final Unmarshaller m = cxt.createUnmarshaller();
+
+        final StringReader input = new StringReader(response);
+        customer = (Customer) m.unmarshal(input);
+
+        Assert.assertEquals("456789", customer.getZip());
+    }
+    
     @Test
     public void testUpdateCustomer()
             throws JAXBException,
@@ -139,7 +156,6 @@ public class CustomerResourceTest
         final String path = resourceLoc.getPath();
         final String idStr = path.substring(path.lastIndexOf('/') + 1);
         final URI uri = URI.create(buildBasicUrl().toString() + "/" + idStr);
-        System.out.println("PUT call with URI " + uri);
 
         final Response response = client.target(uri).request().put(Entity.xml(putData.toString()));
         Assert.assertEquals(204, response.getStatus());
@@ -170,7 +186,6 @@ public class CustomerResourceTest
         final String path = resourceLoc.getPath();
         final String idStr = path.substring(path.lastIndexOf('/') + 1);
         final URI uri = URI.create(buildBasicUrl().toString() + "/" + idStr);
-        System.out.println("DELETE call with URI " + uri);
 
         final Response response = client.target(uri).request().delete();
         Assert.assertEquals(204, response.getStatus());

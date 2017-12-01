@@ -99,6 +99,10 @@ public class CustomerResource
         for (final int id : customerDB.keySet())
         {
             final Customer customer = customerDB.get(id);
+            if (customer == null)
+            {
+            	break;
+            }
             if (customer.getFirstName().equals(firstName)
                     &&
                     customer.getLastName().equals(lastName))
@@ -208,7 +212,6 @@ public class CustomerResource
             throws JAXBException
     {
         // TODO Auto-generated method stub
-        System.out.println("POST INPUT - " + is.toString());
         final JAXBContext context = JAXBContext.newInstance(Customer.class);
         final Unmarshaller um = context.createUnmarshaller();
         final Customer customer = (Customer) um.unmarshal(is);
