@@ -3,7 +3,7 @@
 Implementations on RESTful API using different technologies.
 
 Java:
-Using JavaEE JAX-RS 2.1 API spec deployed on Tomcat with apache cxf and runtime implementation for jax-rs API.
+Using JavaEE JAX-RS 2.1 API spec deployed on Tomcat 8.5 with apache cxf as runtime implementation for jax-rs API.
 
 Python:
-Using dango and django-restframework.
+Using django and django-restframework with Python 3.0. Using django inbuilt server for deployment.
