@@ -20,7 +20,6 @@ class Game(models.Model):
         related_name='games',
         on_delete=models.CASCADE)
     release_date = models.DateTimeField()
-    game_category = models.CharField(max_length=200, blank=True, default='')
     played = models.BooleanField(default=True)
 
     class Meta:
