@@ -4,6 +4,8 @@ package com.example.restful.domain;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
 /**
  * A simple POJO to represent Customer resource.
  */

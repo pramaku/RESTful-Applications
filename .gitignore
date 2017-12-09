@@ -3,5 +3,7 @@ Java/RestfulCustomerServiceSystem/.settings/**
 Python/gamesapi/games/migrations/__pycache__/**
 Python/gamesapi/games/__pycache__/**
 Python/gamesapi/gamesapi/__pycache__/**
+Python/gamesapi/games/migrations/**
+Python/.idea/**
 .classpath
 .project

@@ -1,11 +1,7 @@
-// CustomerResource.java - (insert one line description here)
+// 
 
 package com.example.restful.services;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,15 +17,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import com.example.restful.domain.Customer;
 
 /**
+ * Controller class to handle rest requests for customer resource
  *
  */
 @Path("/customers")
@@ -38,19 +30,19 @@ public class CustomerResource
     private Map<Integer, Customer> customerDB = new ConcurrentHashMap<Integer, Customer>();
     private AtomicInteger idCounter = new AtomicInteger();
 
-    // POST call to create a new customer resource
+    /**
+     * Creates a customer resource on the system with the given data
+     *
+     * @param is the request data in the input stream
+     * @return the HTTP created response on success
+     */
     @POST
-    @Consumes("application/xml")
-    public Response createCustomer(final InputStream is)
+    @Consumes({"application/xml, application/json"})
+    public Response createCustomer(final Customer customer)
     {
-        Customer customer = null;
-        try
+    	System.out.println("POST request to create resource " + customer);
+        if (customer == null)
         {
-            customer = readCustomer(is);
-        }
-        catch (final JAXBException e)
-        {
-            // TODO Auto-generated catch block
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
@@ -59,11 +51,16 @@ public class CustomerResource
         return Response.created(URI.create("/customers/" + customer.getId())).build();
     }
 
-    // GET call to retrieve a given customer resource based on ID.
+    /**
+     * GET call to retrieve a given customer resource based on ID
+     *
+     * @param id the customer id for the requested resource
+     * @return the customer resource data in XML
+     */
     @GET
     @Path("{id}")
-    @Produces("application/xml")
-    public StreamingOutput getCustomer(@PathParam("id") final int id)
+    @Consumes({"application/xml, application/json"})
+    public Customer getCustomer(@PathParam("id") final int id)
     {
         final Customer customer = customerDB.get(id);
         if (customer == null)
@@ -71,28 +68,20 @@ public class CustomerResource
             System.out.println("No resource with ID - " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-
-        return new StreamingOutput()
-        {
-            public void write(final OutputStream os)
-                    throws IOException,
-                    WebApplicationException
-            {
-                try
-                {
-                    outputCustomer(os, customer);
-                }
-                catch (final JAXBException e)
-                {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-                }
-            }
-        };
+        return customer;
     }
 
+    /**
+     * Get the customer resource based on given first and last name
+     *
+     * @param firstName
+     * @param lastName
+     * @return the customer resource data in xml
+     */
     @GET
     @Path("{firstname}-{lastname}")
-    public StreamingOutput getCustomer(
+    @Consumes({"application/xml, application/json"})
+    public Customer getCustomer(
             @PathParam("firstname") final String firstName,
             @PathParam("lastname") final String lastName)
     {
@@ -107,22 +96,7 @@ public class CustomerResource
                     &&
                     customer.getLastName().equals(lastName))
             {
-                return new StreamingOutput()
-                {
-                    public void write(final OutputStream os)
-                            throws IOException,
-                            WebApplicationException
-                    {
-                        try
-                        {
-                            outputCustomer(os, customer);
-                        }
-                        catch (final JAXBException e)
-                        {
-                            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-                        }
-                    }
-                };
+            	return customer;
             }
         }
 
@@ -130,19 +104,19 @@ public class CustomerResource
         throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    // PUT call to update a customer resource with given fields
+    /**
+     * Update the customer resource with the given details.
+     * 
+     * @param id the customer resource id to be updated
+     * @param is the input customer data to be used for update
+     */
     @PUT
     @Path("{id}")
-    @Consumes("application/xml")
-    public void updateCustomer(@PathParam("id") final int id, final InputStream is)
+    @Consumes({"application/xml, application/json"})
+    public void updateCustomer(@PathParam("id") final int id, final Customer update)
     {
         System.out.println("PUT request for id " + id);
-        Customer update = null;
-        try
-        {
-            update = readCustomer(is);
-        }
-        catch (final JAXBException e)
+        if (update == null)
         {
             // TODO Auto-generated catch block
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -164,7 +138,11 @@ public class CustomerResource
 
     }
 
-    // DELETE call to delete the customer resource
+    /**
+     * delete the given customer resource
+     * 
+     * @param id the id of the customer resource to be deleted
+     */
     @DELETE
     @Path("{id}")
     public void deleteCustomer(@PathParam("id") final int id)
@@ -180,58 +158,12 @@ public class CustomerResource
         }
     }
 
-    @GET
-    @Path("0")
-    @Produces("application/xml")
-    public StreamingOutput testResource()
+    @POST
+    @Path("/0")
+    @Produces("application/json")
+    public void testResource(String path)
     {
-        System.out.println("testResource handling GET call");
-        return new StreamingOutput()
-        {
-            public void write(final OutputStream arg0)
-                    throws IOException,
-                    WebApplicationException
-            {
-                final PrintStream writer = new PrintStream(arg0);
-                writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
-                writer.println("<customer id=\"0\">");
-                writer.println("<name>test</name>");
-                writer.println("</customer>");
-            }
-        };
-    }
-
-    /**
-     * Serialize the given input XML to customer Object.
-     *
-     * @param is
-     * @return
-     * @throws JAXBException
-     */
-    private Customer readCustomer(final InputStream is)
-            throws JAXBException
-    {
-        // TODO Auto-generated method stub
-        final JAXBContext context = JAXBContext.newInstance(Customer.class);
-        final Unmarshaller um = context.createUnmarshaller();
-        final Customer customer = (Customer) um.unmarshal(is);
-        return customer;
-    }
-
-    /**
-     * Convert the given customer object to XML as output stream
-     *
-     * @param os
-     * @param customer
-     * @throws JAXBException
-     */
-    protected void outputCustomer(final OutputStream os, final Customer customer)
-            throws JAXBException
-    {
-        final JAXBContext context = JAXBContext.newInstance(Customer.class);
-        final Marshaller m = context.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-        m.marshal(customer, os);
+        System.out.println("testResource handling PUt call");
+        System.out.println(path);
     }
 }
