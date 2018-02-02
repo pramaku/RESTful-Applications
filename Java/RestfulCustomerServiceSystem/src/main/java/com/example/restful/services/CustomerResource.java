@@ -59,7 +59,7 @@ public class CustomerResource
      */
     @GET
     @Path("{id}")
-    @Consumes({"application/xml, application/json"})
+    @Produces({"application/xml, application/json"})
     public Customer getCustomer(@PathParam("id") final int id)
     {
         final Customer customer = customerDB.get(id);
@@ -80,7 +80,7 @@ public class CustomerResource
      */
     @GET
     @Path("{firstname}-{lastname}")
-    @Consumes({"application/xml, application/json"})
+    @Produces({"application/xml, application/json"})
     public Customer getCustomer(
             @PathParam("firstname") final String firstName,
             @PathParam("lastname") final String lastName)
